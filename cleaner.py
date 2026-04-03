@@ -77,7 +77,15 @@ def remove_invalid_dates(data):
     Returns:
         list: List of removed employee records
     """
-    pass
+    new_list = []
+    for entry in data:
+        split_date = entry[9].split("-")
+        if int(split_date[0]) < 2015 or int(split_date[0]) > 2025 or int(split_date[1]) < 1 or int(split_date[1]) > 12 or int(split_date[2]) < 1 or (int(split_date[2]) > 30 and int(split_date[1] != 2)) or (is_leap_year(int(split_date[0])) and int(split_date[1]) == 2 and int(split_date[2]) > 29) or (not is_leap_year(int(split_date[0])) and int(split_date[1]) == 2 and int(split_date[2]) > 28):
+            continue
+        else:
+            new_list.append(entry)
+
+    return new_list
 
 
 if __name__ == "__main__":
