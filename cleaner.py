@@ -6,9 +6,8 @@ from helper import read_hr_data
 def remove_null_salaries(data):
 
     new_list = []
-
     for entry in data:
-        if entry == " ":
+        if math.isnan(entry[4]):
             continue
         else:
             new_list.append(entry)
@@ -16,67 +15,36 @@ def remove_null_salaries(data):
     return new_list
 
 def standardize_departments(data):
-    """
-    Convert all Department names (index 1) to lowercase.
 
-    Modifies the data list in place. Returns nothing.
-
-    Args:
-        data (list): 2D list of employee records
-    """
-    pass
+    for i in range(len(data)):
+        data[i][1] = data[i][1].lower()
 
 
 def remove_invalid_performance_ratings(data):
-    """
-    Remove records with Performance_Rating (index 6) outside range [0, 5].
 
-    Modifies the data list in place. Returns the list of removed entries.
+    new_list = []
+    for entry in data:
+        if 0 <= entry[6] <= 5:
+            new_list.append(entry)
 
-    Args:
-        data (list): 2D list of employee records
-
-    Returns:
-        list: List of removed employee records
-    """
-    pass
+    return new_list
 
 
 def fix_format_dates(data):
-    """
-    Fix the formatting of hire dates that are not in YYYY-MM-DD format.
 
-    Some dates may be in DD/MM/YYYY format; convert these to YYYY-MM-DD.
-    Expected format: YYYY-MM-DD
+    for i in range(len(data)):
+        spilt_date = data[i][9].split("/")
+        if len(spilt_date) != 3:
+            continue
+        else:
+            data[i][9] = spilt_date[2] + "-" + spilt_date[1] + "-" + spilt_date[0]
 
-    Modifies the data list in place. Returns nothing.
-
-    Args:
-        data (list): 2D list of employee records
-    """
-    pass
-
+def is_leap_year(year):
+    if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+        return True
+    return False
 
 def remove_invalid_dates(data):
-    """
-    Remove records with invalid hire dates.
-
-    Removes entries where:
-    - The year is before 2015 (company was founded in 2015)
-    - The year is after 2025 (future dates beyond company scope)
-    - The date is logically invalid:
-      - Days less than 1 or greater than 30
-      - For February: check leap year (29 days in leap years, 28 otherwise)
-      - Months less than 1 or greater than 12
-
-    Modifies the data list in place. Returns the list of removed entries.
-
-    Args:
-        data (list): 2D list of employee records
-
-    Returns:
-        list: List of removed employee records
-    """
     new_list = []
     for entry in data:
         split_date = entry[9].split("-")
@@ -101,25 +69,25 @@ if __name__ == "__main__":
     # Uncomment the lines below to test each cleaning function
     # You can modify the function arguments to test different inputs
 
-    # 1. Remove null salaries (Thendo)
+    # 1. Remove null salaries
     removed_salaries = remove_null_salaries(data)
     print(f"Removed {len(removed_salaries)} records with null salaries")
     print(f"Remaining records: {len(data)}\n")
 
-    # 2. Standardize departments (Thendo)
+    # 2. Standardize departments
     standardize_departments(data)
     print("Standardized department names to lowercase\n")
 
-    # 3. Remove invalid performance ratings (Berry)
+    # 3. Remove invalid performance ratings
     removed_ratings = remove_invalid_performance_ratings(data)
     print(f"Removed {len(removed_ratings)} records with invalid performance ratings")
     print(f"Remaining records: {len(data)}\n")
 
-    # 4. Fix hire date formatting (Berry)
+    # 4. Fix hire date formatting
     fix_format_dates(data)
     print("Fixed hire date formatting\n")
 
-    # 5. Remove invalid dates (Lebo)
+    # 5. Remove invalid dates
     removed_dates = remove_invalid_dates(data)
     print(f"Removed {len(removed_dates)} records with invalid dates")
     print(f"Remaining records: {len(data)}\n")
