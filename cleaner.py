@@ -4,7 +4,7 @@ from helper import read_hr_data
 
 
 def remove_null_salaries(data):
-
+    # Build a new list so that we keep only usable salary records for later analysis.
     new_list = []
     for entry in data:
         if math.isnan(entry[4]):
@@ -14,14 +14,15 @@ def remove_null_salaries(data):
 
     return new_list
 
-def standardize_departments(data):
 
+def standardize_departments(data):
+    # Convert department labels to lower case so grouping by department stays consistent.
     for i in range(len(data)):
         data[i][1] = data[i][1].lower()
 
 
 def remove_invalid_performance_ratings(data):
-
+    # Filter out ratings outside the valid range so averages are based on valid scores only.
     new_list = []
     for entry in data:
         if 0 <= entry[6] <= 5:
@@ -31,7 +32,7 @@ def remove_invalid_performance_ratings(data):
 
 
 def fix_format_dates(data):
-
+    # Standardize dates first so the later date validation checks one consistent format.
     for i in range(len(data)):
         spilt_date = data[i][9].split("/")
         if len(spilt_date) != 3:
@@ -39,12 +40,16 @@ def fix_format_dates(data):
         else:
             data[i][9] = spilt_date[2] + "-" + spilt_date[1] + "-" + spilt_date[0]
 
+
 def is_leap_year(year):
+    # Separate leap-year logic so February validation is easier to read and re-use.
     if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
         return True
     return False
 
+
 def remove_invalid_dates(data):
+    # Keep only dates that satisfy the assignment range and calendar rules.
     new_list = []
     for entry in data:
         split_date = entry[9].split("-")
