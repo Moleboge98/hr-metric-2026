@@ -4,6 +4,7 @@ from helper import read_hr_data
 
 
 def get_department_headcount(data):
+    # Count by department so we get a simple workforce size summary for each team.
     headcount = {}
     for entry in data:
         department = entry[1]
@@ -16,7 +17,7 @@ def get_department_headcount(data):
 
 
 def get_unique_departments(data):
-
+    # A set removes duplicates automatically, which is the simplest way to list departments once.
     set_departments = set()
     for entry in data:
         set_departments.add(entry[1])
@@ -24,7 +25,7 @@ def get_unique_departments(data):
 
 
 def get_gender_distribution(data):
-
+    # Use nested dictionaries so each department can store its own gender counts and percentages.
     distribution = {}
     departments = get_unique_departments(data)
     for department in departments:
@@ -39,6 +40,7 @@ def get_gender_distribution(data):
             distribution[department][gender] += 1
 
     for department, gender_dist in distribution.items():
+        # Convert counts to percentages so departments of different sizes can be compared fairly.
         count_total = 0
         for gender, count in gender_dist.items():
             count_total += count
@@ -46,13 +48,14 @@ def get_gender_distribution(data):
         for gender, count in gender_dist.items():
             gender_dist[gender] /= count_total
             gender_dist[gender] *= 100
+            # Round to 2 decimals to match the assignment output format.
             gender_dist[gender] = round(gender_dist[gender], 2)
 
     return distribution
 
 
 def get_avg_age_by_department(data):
-
+    # Store a running total and count so each department average can be calculated efficiently.
     distribution = {}
     for entry in data:
         department = entry[1]
@@ -64,13 +67,14 @@ def get_avg_age_by_department(data):
             distribution[department][1] += 1
 
     for department, array in distribution.items():
+        # Round to 2 decimals so the result format stays consistent across metrics.
         distribution[department] = round(array[0] / array[1], 2)
 
     return distribution
 
 
 def get_avg_salary_by_department(data):
-
+    # Use totals and counts per department because average salary is a grouped aggregate.
     distribution = {}
     for entry in data:
         department = entry[1]
@@ -82,13 +86,14 @@ def get_avg_salary_by_department(data):
             distribution[department][1] += 1
 
     for department, array in distribution.items():
+        # Round to 2 decimals so salary outputs are easy to compare and report.
         distribution[department] = round(array[0] / array[1], 2)
 
     return distribution
 
 
 def get_salary_dispersion_by_department(data):
-
+    # Collect all salaries per department first because spread metrics need the full salary list.
     salaries_by_department = {}
     dispersion = {}
 
@@ -101,6 +106,7 @@ def get_salary_dispersion_by_department(data):
             salaries_by_department[department].append(salary)
 
     for department, salaries in salaries_by_department.items():
+        # Variance and standard deviation show how widely salaries are spread within a department.
         avg_salary = sum(salaries) / len(salaries)
         variance = 0
         for salary in salaries:
@@ -118,7 +124,7 @@ def get_salary_dispersion_by_department(data):
 
 
 def get_avg_performance_by_department(data):
-
+    # Group by department so we can compare typical performance across teams.
     distribution = {}
     for entry in data:
         department = entry[1]
@@ -130,13 +136,14 @@ def get_avg_performance_by_department(data):
             distribution[department][1] += 1
 
     for department, array in distribution.items():
+        # Round to 2 decimals to keep performance summaries consistent.
         distribution[department] = round(array[0] / array[1], 2)
 
     return distribution
 
 
 def get_avg_training_hours_by_department(data):
-
+    # Group training hours by department to compare development effort between teams.
     distribution = {}
     for entry in data:
         department = entry[1]
@@ -148,13 +155,14 @@ def get_avg_training_hours_by_department(data):
             distribution[department][1] += 1
 
     for department, array in distribution.items():
+        # Round to 2 decimals so the reported averages are consistent.
         distribution[department] = round(array[0] / array[1], 2)
 
     return distribution
 
 
 def get_retention_rate(data):
-
+    # Count active employees against the full dataset because retention is an overall proportion.
     active = 0
     total = 0
     for entry in data:
@@ -164,11 +172,12 @@ def get_retention_rate(data):
         else:
             total += 1
 
+    # Return a percentage so the result is easy to interpret in the report.
     return round(active / total * 100, 2)
 
 
 def get_retention_rate_by_department(data):
-
+    # Track active and total employees per department so retention problems can be located by team.
     distribution = {}
     for entry in data:
         department = entry[1]
@@ -186,13 +195,14 @@ def get_retention_rate_by_department(data):
                 distribution[department][1] += 1
 
     for department, array in distribution.items():
+        # Convert to a percentage so departments can be compared even when sizes differ.
         distribution[department] = round(array[0] / array[1] * 100, 2)
 
     return distribution
 
 
 def get_turnover_rate_by_department(data):
-
+    # Track resigned and total employees per department to measure turnover at team level.
     distribution = {}
     for entry in data:
         department = entry[1]
@@ -210,13 +220,14 @@ def get_turnover_rate_by_department(data):
                 distribution[department][1] += 1
 
     for department, array in distribution.items():
+        # Use percentages so turnover is comparable across departments.
         distribution[department] = round(array[0] / array[1] * 100, 2)
 
     return distribution
 
 
 def get_avg_salary_by_age_range(data, min_age, max_age):
-
+    # Filter by an inclusive age range because the question asks for employees within the range.
     salary = 0
     count = 0
     for entry in data:
@@ -225,12 +236,13 @@ def get_avg_salary_by_age_range(data, min_age, max_age):
             count += 1
 
     if count == 0:
+        # Return 0.0 when no records match so the function handles empty ranges safely.
         return round(0.0, 2)
     return round(salary / count, 2)
 
 
 def get_avg_dept_performance_by_training_range(data, min_hours, max_hours):
-
+    # Filter by training range first, then group by department to compare training-linked performance.
     distribution = {}
     for entry in data:
         department = entry[1]
@@ -244,13 +256,14 @@ def get_avg_dept_performance_by_training_range(data, min_hours, max_hours):
                 distribution[department][1] += 1
 
     for department, array in distribution.items():
+        # Round to 2 decimals so departmental averages are easy to report.
         distribution[department] = round(array[0] / array[1], 2)
 
     return distribution
 
 
 def get_avg_overtime_by_status(data):
-
+    # Group by employment status to check whether overtime patterns differ for active and resigned staff.
     distribution = {}
     for entry in data:
         status = entry[8]
@@ -262,13 +275,14 @@ def get_avg_overtime_by_status(data):
             distribution[status][1] += 1
 
     for status, array in distribution.items():
+        # Round to 2 decimals for a clear summary metric.
         distribution[status] = round(array[0] / array[1], 2)
 
     return distribution
 
 
 def get_salary_by_gender_within_department(data):
-
+    # Group by department first to make gender salary comparisons fair within the same team.
     distribution = {}
     for entry in data:
         department = entry[1]
@@ -286,13 +300,14 @@ def get_salary_by_gender_within_department(data):
 
     for department, gender_distribution in distribution.items():
         for gender, array in gender_distribution.items():
+            # Average within each subgroup so the result reflects typical pay, not total pay.
             gender_distribution[gender] = round(array[0] / array[1], 2)
 
     return distribution
 
 
 def get_avg_tenure_by_status(data, reference_date=None):
-
+    # Use a reference date so tenure is measured from a consistent endpoint.
     if reference_date is None:
         reference_date = datetime.today()
 
@@ -310,6 +325,7 @@ def get_avg_tenure_by_status(data, reference_date=None):
             distribution[status][1] += 1
 
     for status, array in distribution.items():
+        # Average tenure by status helps compare whether one group tends to stay longer.
         distribution[status] = round(array[0] / array[1], 2)
 
     return distribution
